@@ -1,0 +1,27 @@
+{
+   "name": "elogank/lol-commands",
+   "description": "Useful developers commands for League of Legends",
+   "keywords": ["lol", "command", "league of legends", "dump"],
+   "licence": "MIT",
+   "authors": [
+       {
+           "name": "Sylvain Lorinet",
+           "email": "sylvain.lorinet@gmail.com"
+       }
+    ],
+    "require": {
+        "php": ">=5.4.0",
+        "symfony/console": "2.5.5"
+    },
+    "extra": {
+        "branch-alias": {
+            "dev-master": "1.0-dev"
+        }
+    },
+    "autoload": {
+        "psr-0": {
+            "EloGank": "src/"
+        }
+    },
+    "minimum-stability": "dev"
+}
