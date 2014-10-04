@@ -13,6 +13,7 @@ See the list of [contributors](https://github.com/EloGank/lol-commands/graphs/co
 
 ## Licence
 
-[Creative Commons Attribution-ShareAlike 3.0](./LICENCE.md)
+[MIT, more information](./LICENCE)
 
-*League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends (c) Riot Games, Inc.*
+*This repository or EloGank developers aren't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends.  
+League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends © Riot Games, Inc.*

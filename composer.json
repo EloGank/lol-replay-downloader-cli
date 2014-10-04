@@ -11,7 +11,9 @@
     ],
     "require": {
         "php": ">=5.4.0",
-        "symfony/console": "2.5.5"
+        "symfony/console": "2.5.5",
+
+        "elogank/lol-commands-replay": "1.0.*@dev"
     },
     "extra": {
         "branch-alias": {
@@ -20,7 +22,7 @@
     },
     "autoload": {
         "psr-0": {
-            "EloGank": "src/"
+            "EloGank\\Util": "src/"
         }
     },
     "minimum-stability": "dev"
