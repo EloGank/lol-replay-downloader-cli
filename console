@@ -2,9 +2,9 @@
 <?php
 
 /*
- * This file is part of the "EloGank League of Legends Commands" package.
+ * This file is part of the "EloGank League of Legends Replay Downloader" package.
  *
- * https://github.com/EloGank/lol-commands
+ * https://github.com/EloGank/lol-replay-downloader
  *
  * For the full license information, please view the LICENSE
  * file that was distributed with this source code.
@@ -15,23 +15,17 @@ require 'vendor/autoload.php';
 $application = new Symfony\Component\Console\Application();
 
 // List all available commands
-$iterator = new \GlobIterator(__DIR__ . '/vendor/elogank/*/src/EloGank/Util/*/Command/*Command.php');
+$iterator = new \GlobIterator(__DIR__ . '/src/EloGank/Replay/Command/*Command.php');
 /** @var \SplFileInfo $command */
 foreach ($iterator as $command) {
     if ($command->isDir()) {
         continue;
     }
 
-    $name = substr($command->getFilename(), 0, -4);
-    if (!preg_match('/src\/EloGank\/Util\/([a-zA-Z0-9]+)\/Command/', $command->getRealPath(), $matches)) {
-        continue;
-    }
-
-    $dependencyName = $matches[1];
-    $namespace = '\\EloGank\\Util\\' . $dependencyName . '\\Command\\' . $name;
+    $namespace = '\\EloGank\\Replay\\Command\\' . substr($command->getFilename(), 0, -4);
     $reflectionClass = new \ReflectionClass($namespace);
 
-    if ($reflectionClass->isSubclassOf('\\EloGank\\Util\\Component\\Command\\Command')) {
+    if ($reflectionClass->isSubclassOf('\\EloGank\\Component\\Command\\Command')) {
         $application->add(new $namespace());
     }
 }

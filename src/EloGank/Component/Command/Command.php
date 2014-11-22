@@ -1,15 +1,15 @@
 <?php
 
 /*
- * This file is part of the "EloGank League of Legends Commands" package.
+ * This file is part of the "EloGank League of Legends Replay Downloader" package.
  *
- * https://github.com/EloGank/lol-commands
+ * https://github.com/EloGank/lol-replay-downloader-cli
  *
  * For the full license information, please view the LICENSE
  * file that was distributed with this source code.
  */
 
-namespace EloGank\Util\Component\Command;
+namespace EloGank\Component\Command;
 
 use Symfony\Component\Console\Command\Command as BaseCommand;
 use Symfony\Component\Console\Output\OutputInterface;
@@ -36,6 +36,7 @@ abstract class Command extends BaseCommand
 
         if (null != $sectionTitle) {
             $length = ($sectionLength - strlen($sectionTitle)) / 2;
+            // FIXME the ending length can be too long
             $output->writeln(array(
                 str_pad('[', $length, ' ') . $sectionTitle . str_pad('', $sectionLength - strlen($sectionTitle) - $length, ' ') . ']',
                 $section
