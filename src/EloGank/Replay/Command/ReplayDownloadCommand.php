@@ -14,6 +14,7 @@ namespace EloGank\Replay\Command;
 use EloGank\Component\Command\Command;
 use EloGank\Component\Configuration\Config;
 use EloGank\Replay\Client\ReplayClient;
+use EloGank\Replay\Command\Output\ConsoleOutput;
 use EloGank\Replay\Downloader\ReplayDownloader;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -52,6 +53,7 @@ class ReplayDownloadCommand extends Command
      */
     protected function execute(InputInterface $input, OutputInterface $output)
     {
+        $output = new ConsoleOutput($output);
         $replayDownloader = new ReplayDownloader(new ReplayClient(), Config::get('replay.path'));
 
         if ($input->getOption('async')) {

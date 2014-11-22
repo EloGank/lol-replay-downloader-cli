@@ -1,6 +1,6 @@
 {
    "name": "elogank/lol-replay-downloader-cli",
-   "description": "League of Legend replay downloader without any software. Replays are saved into the cloud.",
+   "description": "League of Legend replay CLI downloader without any software. Replays are saved into the cloud.",
    "keywords": ["lol", "command", "league of legends", "replay", "downloader", "record", "recorder", "cli", "console"],
    "licence": "MIT",
    "authors": [
