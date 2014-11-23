@@ -60,6 +60,7 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
         $output = new ConsoleOutput($output);
         $replayDownloader = $this->createReplayDownloader();
 
+        // The command will start a new process to download the replay, it's a non-blocking command
         if ($input->getOption('async')) {
             $this->info($output, 'Downloading replay #' . $input->getArgument('game_id') . ' (' . $input->getArgument('region') . ') - Asynchronous');
 
@@ -90,14 +91,15 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
 
         // Metas
         try {
+            // Download metas
             $output->write("Retrieve metas...\t\t\t");
             $replayDownloader->downloadMetas($replay);
-            $output->writeln('OK');
+            $output->writeln('<info>OK</info>');
 
-            // Validate game criterias
+            // Validate game criterias based on metas
             $output->write("Validate game criterias...\t\t");
-            if ($replayDownloader->isValid($replay)) {
-                $output->writeln('OK');
+            if ($replayDownloader->isValid($replay, $output)) {
+                $output->writeln('<info>OK</info>');
             }
 
             // Only on sync call, because async do the same thing before (ReplayDownloader::download()::createDirs())
@@ -112,27 +114,24 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
                 $replayDownloader->createDirs($replay->getRegion(), $replay->getGameId());
             }
 
-            // LastChunkInfos
+            // Retrieve last infos to download previous files
             $output->write("Retrieve last infos...\t\t\t");
             $lastChunkInfo = $replayDownloader->getLastChunkInfos($replay);
             $replay->setLastChunkId($lastChunkInfo['chunkId']);
             $replay->setLastKeyframeId($lastChunkInfo['keyFrameId']);
-            $output->writeln('OK');
+            $output->writeln('<info>OK</info>');
 
-            // Previous chunks
+            // Download previous chunks
             $output->write("Download all previous chunks (" . $replay->getLastChunkId() . ")...\t");
             $replayDownloader->downloadChunks($replay);
-            $output->writeln('OK');
+            $output->writeln('<info>OK</info>');
 
-            // Previous keyframes
+            // Download previous keyframes
             $output->write("Download all previous keyframes (" . $replay->getLastKeyframeId() . ")...\t");
             $replayDownloader->downloadKeyframes($replay, $output);
-            $output->writeln(array('OK', ''));
+            $output->writeln(array('<info>OK</info>', ''));
 
-            // Free memory
-            gc_collect_cycles();
-
-            // Current chunks & keyframes
+            // Download current chunks & keyframes
             $output->writeln("Download current game data :");
             $replayDownloader->downloadCurrentData($replay, $output);
             $output->writeln('');
@@ -140,11 +139,13 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
             // Update metas
             $output->write("Update metas...\t\t\t\t");
             $replayDownloader->updateMetas($replay);
-            $output->writeln('OK');
+            $output->writeln('<info>OK</info>');
 
+            // Execute handler
             $this->onSuccess($replay);
         }
         catch (\Exception $e) {
+            // Execute handler
             $this->onFailure($replay, $e);
 
             throw $e;
