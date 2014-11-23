@@ -12,10 +12,14 @@
 namespace EloGank\Replay\Command;
 
 use EloGank\Component\Command\Command;
+use EloGank\Component\Command\Handler\FailureHandlerInterface;
+use EloGank\Component\Command\Handler\SuccessHandlerInterface;
 use EloGank\Component\Configuration\Config;
+use EloGank\Component\Configuration\Exception\ConfigurationKeyNotFoundException;
 use EloGank\Replay\Client\ReplayClient;
 use EloGank\Replay\Command\Output\ConsoleOutput;
 use EloGank\Replay\Downloader\ReplayDownloader;
+use EloGank\Replay\ReplayInterface;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Input\InputOption;
@@ -24,7 +28,7 @@ use Symfony\Component\Console\Output\OutputInterface;
 /**
  * @author Sylvain Lorinet <sylvain.lorinet@gmail.com>
  */
-class ReplayDownloadCommand extends Command
+class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, FailureHandlerInterface
 {
     /**
      * Configure the command
@@ -130,16 +134,65 @@ class ReplayDownloadCommand extends Command
             $replayDownloader->updateMetas($replay);
             $output->writeln('OK');
 
-            // TODO config
-            //$this->onSuccess($replay);
+            $this->onSuccess($replay);
         }
         catch (\Exception $e) {
-            // TODO config
-            //$this->onError($replay, $e);
+            $this->onFailure($replay, $e);
 
             throw $e;
         }
 
         $this->success($output, 'Finished without error');
+    }
+
+    /**
+     * Executed on success
+     *
+     * @param ReplayInterface $replay
+     */
+    public function onSuccess(ReplayInterface $replay)
+    {
+        $successHandler = null;
+        try {
+            $successHandler = Config::get('replay.command.handler.success');
+        }
+        catch (ConfigurationKeyNotFoundException $e) {
+            // Success handler is not set
+        }
+
+        if (null != $successHandler) {
+            $successHandlerClass = new $successHandler();
+            if (!$successHandlerClass instanceof SuccessHandlerInterface) {
+                throw new \InvalidArgumentException('The success handler class ' . $successHandler . ' should implement \EloGank\Component\Handler\SuccessHandlerInterface');
+            }
+
+            $successHandlerClass->onSuccess($replay);
+        }
+    }
+
+    /**
+     * Executed on failure
+     *
+     * @param ReplayInterface $replay
+     * @param \Exception      $exception
+     */
+    public function onFailure(ReplayInterface $replay, \Exception $exception)
+    {
+        $failureHandler = null;
+        try {
+            $failureHandler = Config::get('replay.command.handler.failure');
+        }
+        catch (ConfigurationKeyNotFoundException $e) {
+            // Failure handler is not set
+        }
+
+        if (null != $failureHandler) {
+            $failureHandlerClass = new $failureHandler();
+            if (!$failureHandlerClass instanceof FailureHandlerInterface) {
+                throw new \InvalidArgumentException('The failure handler class ' . $failureHandler . ' should implement \EloGank\Component\Handler\FailureHandlerInterface');
+            }
+
+            $failureHandlerClass->onFailure($replay, $exception);
+        }
     }
 }
