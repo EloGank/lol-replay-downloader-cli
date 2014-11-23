@@ -1,24 +1,35 @@
 config:
     php:
+        # The path to the PHP executable, use by the async command way
         executable_path: php
 
     buzz:
+        # The Buzz main class
         class:           \Buzz\Browser
+        # The Buzz timeout, in second
         timeout:         10
 
     replay:
+        # The replay model class
         class:           \EloGank\Replay\Replay
+        # The replay path
         path:            replays/
         decoder:
+            # Decode files after download them
             enable:      true
+            # Save decoded files into the replay folder
             save_files:  true
         download:
+            # Number of max retry
             max_retry:   15
         command:
             handler:
+                # On command success, must be a class namespace
                 success: ~
+                # On command failure, must be a class namespace
                 failure: ~
         http_client:
+            # List of the spectator server addresses
             servers:
                 EUW1:    185.40.64.163:80
                 NA1:     216.133.234.17:8088

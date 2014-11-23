@@ -1,6 +1,7 @@
 .vagrant
 .idea
 vendor
+composer.phar
 composer.lock
 config/config.yml
 replays

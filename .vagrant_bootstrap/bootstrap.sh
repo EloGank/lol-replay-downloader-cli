@@ -1,13 +1,9 @@
 #!/usr/bin/env bash
 
-# ---------------------------------------------------
-# https://github.com/EloGank/lol-php-api
+# ----------------------------------------------------
+# https://github.com/EloGank/lol-replay-downloader-cli
 # based on : https://github.com/Divi/VagrantBootstrap
-# ---------------------------------------------------
-
-# Include parameteres file
-# ------------------------
-source /vagrant/.vagrant_bootstrap/parameters.sh
+# ----------------------------------------------------
 
 # Update the box release repositories
 # -----------------------------------
@@ -16,7 +12,7 @@ apt-get update
 
 # Essential Packages
 # ------------------
-apt-get install -y build-essential git-core vim curl php5-dev pkg-config
+apt-get install -y build-essential git-core vim curl
 
 
 # PHP 5.x (last official release)
@@ -36,7 +32,7 @@ apt-get install -y php5-cli php5-curl php5-mcrypt
 # APC (only with PHP < 5.5.0, use the "opcache" if >= 5.5.0)
 # apt-get install -y php-apc
 # Setting the timezone
-sed 's#;date.timezone\([[:space:]]*\)=\([[:space:]]*\)*#date.timezone\1=\2\"'"$PHP_TIMEZONE"'\"#g' /etc/php5/cli/php.ini > /etc/php5/cli/php.ini.tmp
+sed 's#;date.timezone\([[:space:]]*\)=\([[:space:]]*\)*#date.timezone\1=\2\"UTC\"#g' /etc/php5/cli/php.ini > /etc/php5/cli/php.ini.tmp
 mv /etc/php5/cli/php.ini.tmp /etc/php5/cli/php.ini
 # Showing error messages
 sed 's#display_errors = Off#display_errors = On#g' /etc/php5/cli/php.ini > /etc/php5/cli/php.ini.tmp
