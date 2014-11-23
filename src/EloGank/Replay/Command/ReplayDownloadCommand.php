@@ -58,14 +58,22 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
     protected function execute(InputInterface $input, OutputInterface $output)
     {
         $output = new ConsoleOutput($output);
-        $replayDownloader = new ReplayDownloader(new ReplayClient(), Config::get('replay.path'));
+        $replayDownloader = $this->createReplayDownloader();
 
         if ($input->getOption('async')) {
-            $this->writeSection($output, 'Downloading replay #' . $input->getArgument('game_id') . ' (' . $input->getArgument('region') . ') - Asynchronous');
+            $this->info($output, 'Downloading replay #' . $input->getArgument('game_id') . ' (' . $input->getArgument('region') . ') - Asynchronous');
 
-            $replayDownloader->download($input->getArgument('region'), $input->getArgument('game_id'), $input->getArgument('encryption_key'));
+            $consolePath = __DIR__ . '/../../../..';
+            $replayDownloader->download(
+                $input->getArgument('region'),
+                $input->getArgument('game_id'),
+                $input->getArgument('encryption_key'),
+                $consolePath,
+                true,
+                $input->getOption('override')
+            );
 
-            return;
+            return 0;
         }
 
         $this->info($output, 'Downloading replay #' . $input->getArgument('game_id') . ' (' . $input->getArgument('region') . ')');
@@ -143,6 +151,24 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
         }
 
         $this->success($output, 'Finished without error');
+    }
+
+    /**
+     * @return ReplayDownloader
+     */
+    protected function createReplayDownloader()
+    {
+        return new ReplayDownloader(new ReplayClient([
+            'buzz.class'                 => Config::get('buzz.class'),
+            'buzz.timeout'               => Config::get('buzz.timeout'),
+            'replay.http_client.servers' => Config::get('replay.http_client.servers')
+        ]), Config::get('replay.path'), [
+            'php.executable_path'       => Config::get('php.executable_path'),
+            'replay.class'              => Config::get('replay.class'),
+            'replay.decoder.enable'     => Config::get('replay.decoder.enable'),
+            'replay.decoder.save_files' => Config::get('replay.decoder.save_files'),
+            'replay.download.retry'     => Config::get('replay.download.max_retry'),
+        ]);
     }
 
     /**

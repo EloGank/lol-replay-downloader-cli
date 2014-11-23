@@ -1,3 +1,31 @@
 config:
-  replay:
-    path: replays/
+    php:
+        executable_path: php
+
+    buzz:
+        class:           \Buzz\Browser
+        timeout:         10
+
+    replay:
+        class:           \EloGank\Replay\Replay
+        path:            replays/
+        decoder:
+            enable:      true
+            save_files:  true
+        download:
+            max_retry:   15
+        command:
+            handler:
+                success: ~
+                failure: ~
+        http_client:
+            servers:
+                EUW1:    185.40.64.163:80
+                NA1:     216.133.234.17:8088
+                KR:      110.45.191.11:8088
+                BR1:     66.151.33.19:80
+                TR1:     95.172.65.242:80
+                TW:      112.121.84.194:8088
+                LA1:     66.150.148.234:80
+                RU:      95.172.65.242:80
+                PBE1:    69.88.138.29:8088
