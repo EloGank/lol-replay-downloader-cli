@@ -12,6 +12,7 @@
 namespace EloGank\Replay\Command\Output;
 
 use EloGank\Replay\Output\OutputInterface;
+use Symfony\Component\Console\Formatter\OutputFormatterInterface;
 use Symfony\Component\Console\Output\ConsoleOutput as BaseConsoleOutput;
 use Symfony\Component\Console\Output\OutputInterface as BaseOutputInterface;
 
@@ -51,5 +52,13 @@ class ConsoleOutput extends BaseConsoleOutput implements OutputInterface
     public function write($messages, $newline = false, $type = self::OUTPUT_NORMAL)
     {
         return $this->output->write($messages, $newline, $type);
+    }
+
+    /**
+     * @return OutputFormatterInterface
+     */
+    public function getFormatter()
+    {
+        return $this->output->getFormatter();
     }
 }

@@ -64,7 +64,7 @@ class ReplayDownloadCommand extends Command
             return;
         }
 
-        $this->writeSection($output, 'Downloading replay #' . $input->getArgument('game_id') . ' (' . $input->getArgument('region') . ')');
+        $this->info($output, 'Downloading replay #' . $input->getArgument('game_id') . ' (' . $input->getArgument('region') . ')');
 
         if (!preg_match('/[A-Z]+/', $input->getArgument('region'), $matches)) {
             throw new \RuntimeException('Cannot determine game region : ' . $input->getArgument('region'));
@@ -140,6 +140,6 @@ class ReplayDownloadCommand extends Command
             throw $e;
         }
 
-        $this->writeSection($output, 'Finished without error');
+        $this->success($output, 'Finished without error');
     }
 }

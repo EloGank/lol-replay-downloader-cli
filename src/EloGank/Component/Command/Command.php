@@ -12,6 +12,7 @@
 namespace EloGank\Component\Command;
 
 use Symfony\Component\Console\Command\Command as BaseCommand;
+use Symfony\Component\Console\Formatter\OutputFormatterStyle;
 use Symfony\Component\Console\Output\OutputInterface;
 
 /**
@@ -19,30 +20,103 @@ use Symfony\Component\Console\Output\OutputInterface;
  */
 abstract class Command extends BaseCommand
 {
+    const OUTPUT_COLOR_BLACK   = 'black';
+    const OUTPUT_COLOR_RED     = 'red';
+    const OUTPUT_COLOR_GREEN   = 'green';
+    const OUTPUT_COLOR_YELLOW  = 'yellow';
+    const OUTPUT_COLOR_BLUE    = 'blue';
+    const OUTPUT_COLOR_MAGENTA = 'magenta';
+    const OUTPUT_COLOR_CYAN    = 'cyan';
+    const OUTPUT_COLOR_WHITE   = 'white';
+
+    const OUTPUT_STYLE_BOLD      = 'bold';
+    const OUTPUT_STYLE_UNDERLINE = 'underscore';
+    const OUTPUT_STYLE_BLINK     = 'blink';
+    const OUTPUT_STYLE_REVERSE   = 'reverse';
+    const OUTPUT_STYLE_CONCEAL   = 'conceal';
+
     /**
      * Write a section title
      *
      * @param OutputInterface $output
-     * @param string|null     $sectionTitle
+     * @param string          $message
+     * @param string          $bg
+     * @param string          $fg
+     * @param string|array    $styles
      */
-    protected function writeSection(OutputInterface $output, $sectionTitle = null)
+    protected function writeSection(OutputInterface $output, $message = null, $bg = null, $fg = null, $styles = null)
     {
+        if (null != $styles && !is_array($styles)) {
+            $styles = [$styles];
+        }
+        elseif (null == $styles) {
+            $styles = [];
+        }
+
+        $style = new OutputFormatterStyle($fg, $bg, $styles);
+        $output->getFormatter()->setStyle('color', $style);
+
         $sectionLength = 80;
-        $section = str_pad('[', $sectionLength - 1, '=') . ']';
+        $section = str_pad('[', $sectionLength - 1, ' ') . ']';
         $output->writeln(array(
             '',
-            $section
+            '<color>' . $section . '</color>'
         ));
 
-        if (null != $sectionTitle) {
-            $length = ($sectionLength - strlen($sectionTitle)) / 2;
-            // FIXME the ending length can be too long
+        if (null != $message) {
+            $titleLength = strlen($message);
+            $length = ($sectionLength - $titleLength) / 2;
             $output->writeln(array(
-                str_pad('[', $length, ' ') . $sectionTitle . str_pad('', $sectionLength - strlen($sectionTitle) - $length, ' ') . ']',
-                $section
+                '<color>' . str_pad('[', $length, ' ') . $message . str_pad('', $sectionLength - $titleLength - (0 != $titleLength % 2 ? $length : $length + 1), ' ') . ']</color>',
+                '<color>' . $section . '</color>'
             ));
         }
 
         $output->writeln('');
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param string          $message
+     */
+    protected function error(OutputInterface $output, $message)
+    {
+        $this->writeSection($output, $message, self::OUTPUT_COLOR_RED, self::OUTPUT_COLOR_WHITE, ['bold']);
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param string          $message
+     */
+    protected function success(OutputInterface $output, $message)
+    {
+        $this->writeSection($output, $message, self::OUTPUT_COLOR_GREEN, self::OUTPUT_COLOR_BLACK);
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param string          $message
+     */
+    protected function warning(OutputInterface $output, $message)
+    {
+        $this->writeSection($output, $message, self::OUTPUT_COLOR_YELLOW, self::OUTPUT_COLOR_BLACK);
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param string          $message
+     */
+    protected function info(OutputInterface $output, $message)
+    {
+        $this->writeSection($output, $message, self::OUTPUT_COLOR_BLUE, self::OUTPUT_COLOR_WHITE);
+    }
+
+    /**
+     * @param OutputInterface $output
+     * @param string          $message
+     */
+    protected function notice(OutputInterface $output, $message)
+    {
+        $this->writeSection($output, $message, self::OUTPUT_COLOR_WHITE, self::OUTPUT_COLOR_BLACK);
     }
 }
