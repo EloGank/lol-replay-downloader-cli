@@ -93,7 +93,7 @@ Example :
 So, you can run the command :
 
 ``` bash
-php console elogank:replay:download EUW1 1839232446 nwP+BEYqHgk4sElnU2uRogoxGPUw1dzE
+php console elogank:replay:download EUW1 1234567890 nwP+BEYqHgk4sElnU2uRogoxGPUw1dzE
 ```
 
 ## Important notes
@@ -112,7 +112,7 @@ See the list of [contributors](https://github.com/EloGank/lol-replay-downloader-
 
 ## Licence
 
-[MIT](./LICENCE.md)
+[MIT, more information](./LICENCE)
 
 *This repository isn't endorsed by Riot Games and doesn't reflect the views or opinions of Riot Games or anyone officially involved in producing or managing League of Legends.  
 League of Legends and Riot Games are trademarks or registered trademarks of Riot Games, Inc. League of Legends (c) Riot Games, Inc.*
