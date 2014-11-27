@@ -1,8 +1,9 @@
 League of Legends Replay Downloader CLI
 ===================================
 
-This project provides you a simple command to easilly download a League of Legends replay game which still in process (ingame). All download files can be decoded to parse them.
-It use the library : https://github.com/EloGank/lol-replay-downloader
+This project provides you a simple command to easilly download a League of Legends replay game which still in process (ingame), like *lolking* or *op.gg* feature. Replays are stored in your server and can be watched at any time.  
+All download files can be decoded to parse them.
+It uses the library : https://github.com/EloGank/lol-replay-downloader
 
 ## Features
 
@@ -17,12 +18,14 @@ It use the library : https://github.com/EloGank/lol-replay-downloader
 
 ## Installation
 
+You have two ways to install the repository. First, with a Virtual Machine, optional but recommended on Windows OS, and the second way, manually (but less than 2 minutes, I swear).
+
 ### Virtual Machine
 
 If you want to install/try this project with a Virtual Machine and avoid the installation process if you haven't yet a PHP environment, [read the virtual machine documentation](./doc/installation_virtual_machine.md).
-It will take you only two minutes.
+It will take you only one minute.
 
-**If you want to install/try this project on a Windows system, we advice you to choose the Virtual Machine installation process. This project hasn't been tested on a Windows system.**
+**If you want to install/try this project on a Windows system, I advice you to choose the Virtual Machine installation process. This project hasn't been tested on a Windows system.**
 
 ### Manually
 
