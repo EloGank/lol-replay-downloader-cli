@@ -1,8 +1,15 @@
 <?php
 
-namespace EloGank\Component\Command\Handler;
+/*
+ * This file is part of the "EloGank League of Legends Replay Downloader" package.
+ *
+ * https://github.com/EloGank/lol-replay-downloader-cli
+ *
+ * For the full license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
 
-use EloGank\Replay\ReplayInterface;
+namespace EloGank\Component\Command\Handler;
 
 /**
  * @author Sylvain Lorinet <sylvain.lorinet@gmail.com>
@@ -12,8 +19,11 @@ interface FailureHandlerInterface
     /**
      * Executed on failure (error, exception, ...)
      *
-     * @param ReplayInterface $replay
-     * @param \Exception      $exception
+     * @param string     $region
+     * @param int        $gameId
+     * @param string     $encryptionKey
+     * @param string     $replayFolderPath
+     * @param \Exception $exception
      */
-    public function onFailure(ReplayInterface $replay, \Exception $exception);
+    public function onFailure($region, $gameId, $encryptionKey, $replayFolderPath, \Exception $exception);
 } 

@@ -60,93 +60,52 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
         $output = new ConsoleOutput($output);
         $replayDownloader = $this->createReplayDownloader();
 
+        $region = $input->getArgument('region');
+        $gameId = $input->getArgument('game_id');
+        $encryptionKey = $input->getArgument('encryption_key');
+
         // The command will start a new process to download the replay, it's a non-blocking command
         if ($input->getOption('async')) {
-            $this->info($output, 'Downloading replay #' . $input->getArgument('game_id') . ' (' . $input->getArgument('region') . ') - Asynchronous');
+            $this->info($output, 'Downloading replay #' . $gameId . ' (' . $region . ') - Asynchronous');
 
             $consolePath = __DIR__ . '/../../../..';
             $replayDownloader->download(
-                $input->getArgument('region'),
-                $input->getArgument('game_id'),
-                $input->getArgument('encryption_key'),
-                $consolePath,
+                $region,
+                $gameId,
+                $encryptionKey,
+                $output,
+                $input->getOption('override'),
                 true,
-                $input->getOption('override')
+                $consolePath
             );
 
             return 0;
         }
 
-        $this->info($output, 'Downloading replay #' . $input->getArgument('game_id') . ' (' . $input->getArgument('region') . ')');
+        $this->info($output, 'Downloading replay #' . $gameId . ' (' . $region . ')');
 
-        if (!preg_match('/[A-Z]+/', $input->getArgument('region'), $matches)) {
-            throw new \RuntimeException('Cannot determine game region : ' . $input->getArgument('region'));
+        $regions = Config::get('replay.http_client.servers');
+        if (!isset($regions[$region])) {
+            throw new \RuntimeException('Cannot determine game region : ' . $region);
         }
-
-        $replay = $replayDownloader->createReplay(
-            $input->getArgument('region'),
-            $input->getArgument('game_id'),
-            $input->getArgument('encryption_key')
-        );
 
         // Metas
         try {
-            // Download metas
-            $output->write("Retrieve metas...\t\t\t");
-            $replayDownloader->downloadMetas($replay);
-            $output->writeln('<info>OK</info>');
-
-            // Validate game criterias based on metas
-            $output->write("Validate game criterias...\t\t");
-            if ($replayDownloader->isValid($replay, $output)) {
-                $output->writeln('<info>OK</info>');
-            }
-
-            // Only on sync call, because async do the same thing before (ReplayDownloader::download()::createDirs())
-            if ($input->getOption('override')) {
-                if (!is_dir($replayDownloader->getReplayDirPath($replay->getRegion(), $replay->getGameId()))) {
-                    // Create directories
-                    $replayDownloader->createDirs($replay->getRegion(), $replay->getGameId());
-                }
-            }
-            else {
-                // Create directories
-                $replayDownloader->createDirs($replay->getRegion(), $replay->getGameId());
-            }
-
-            // Retrieve last infos to download previous files
-            $output->write("Retrieve last infos...\t\t\t");
-            $lastChunkInfo = $replayDownloader->getLastChunkInfos($replay);
-            $replay->setLastChunkId($lastChunkInfo['chunkId']);
-            $replay->setLastKeyframeId($lastChunkInfo['keyFrameId']);
-            $output->writeln('<info>OK</info>');
-
-            // Download previous chunks
-            $output->write("Download all previous chunks (" . $replay->getLastChunkId() . ")...\t");
-            $replayDownloader->downloadChunks($replay);
-            $output->writeln('<info>OK</info>');
-
-            // Download previous keyframes
-            $output->write("Download all previous keyframes (" . $replay->getLastKeyframeId() . ")...\t");
-            $replayDownloader->downloadKeyframes($replay, $output);
-            $output->writeln(array('<info>OK</info>', ''));
-
-            // Download current chunks & keyframes
-            $output->writeln("Download current game data :");
-            $replayDownloader->downloadCurrentData($replay, $output);
-            $output->writeln('');
-
-            // Update metas
-            $output->write("Update metas...\t\t\t\t");
-            $replayDownloader->updateMetas($replay);
-            $output->writeln('<info>OK</info>');
+            $replay = $replayDownloader->download(
+                $region,
+                $gameId,
+                $encryptionKey,
+                $output,
+                $input->getOption('override')
+            );
 
             // Execute handler
-            $this->onSuccess($replay);
+            $this->onSuccess($replay, $replayDownloader->getReplayDirPath($region, $gameId));
+
         }
         catch (\Exception $e) {
             // Execute handler
-            $this->onFailure($replay, $e);
+            $this->onFailure($region, $gameId, $encryptionKey, $replayDownloader->getReplayDirPath($region, $gameId), $e);
 
             throw $e;
         }
@@ -176,8 +135,9 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
      * Executed on success
      *
      * @param ReplayInterface $replay
+     * @param string          $replayFolderPath
      */
-    public function onSuccess(ReplayInterface $replay)
+    public function onSuccess(ReplayInterface $replay, $replayFolderPath)
     {
         $successHandler = null;
         try {
@@ -193,17 +153,20 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
                 throw new \InvalidArgumentException('The success handler class ' . $successHandler . ' should implement \EloGank\Component\Handler\SuccessHandlerInterface');
             }
 
-            $successHandlerClass->onSuccess($replay);
+            $successHandlerClass->onSuccess($replay, $replayFolderPath);
         }
     }
 
     /**
      * Executed on failure
      *
-     * @param ReplayInterface $replay
-     * @param \Exception      $exception
+     * @param string     $region
+     * @param int        $gameId
+     * @param string     $encryptionKey
+     * @param string     $replayFolderPath
+     * @param \Exception $exception
      */
-    public function onFailure(ReplayInterface $replay, \Exception $exception)
+    public function onFailure($region, $gameId, $encryptionKey, $replayFolderPath, \Exception $exception)
     {
         $failureHandler = null;
         try {
@@ -219,7 +182,7 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
                 throw new \InvalidArgumentException('The failure handler class ' . $failureHandler . ' should implement \EloGank\Component\Handler\FailureHandlerInterface');
             }
 
-            $failureHandlerClass->onFailure($replay, $exception);
+            $failureHandlerClass->onFailure($region, $gameId, $encryptionKey, $replayFolderPath, $exception);
         }
     }
 }
