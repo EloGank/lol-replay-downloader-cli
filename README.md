@@ -79,8 +79,13 @@ Downloading chunk       ...
 
 To get the region, is pretty easy : just look at the file `config/config.yml`, all region servers are listed. For example, if you play on the EUW server, just use the region `EUW1`.
 
+### From an unofficial API
+
 For the **game id** and the **encryption key**, it's a few harder. Indeed, the [official Riot API](https://developer.riotgames.com/) doesn't provide yet an API to retrieve this data.  
 To get it, you have to use an unofficial API, like this : https://github.com/EloGank/lol-php-api, please see the route `game.retrieve_in_progress_spectator_game_info`. Note that using other route is not allowed, by the new Riot Terms of Use (see "Important notes" below).  
+
+### From LoLNexus website
+
 For testing purpose, you can simply go to spectating websites like [lolnexus](http://www.lolnexus.com), click on "Spectate" button on a game, and you'll have the region, game id & encryption key in the command line to launch the game, see the end of the line :
 
 ``` bash
@@ -98,6 +103,14 @@ So, you can run the command :
 ``` bash
 php console elogank:replay:download EUW1 1234567890 nwP+BEYqHgk4sElnU2uRogoxGPUw1dzE
 ```
+
+### From LoLNexus parser
+
+A LoLNexus PHP parser exists here : https://github.com/EloGank/lol-replay-downloader/blob/master/examples/utils/LoLNexusParser.php
+
+Usage is simple : you juste have to select the region by calling the `LoLNexusParser::parse($regionId)` method and it will bring you all parameters for running a command by calling `LoLNexusParser::getRegion()`, `LoLNexusParser::getGameId()` or `LoLNexusParser::getEncryptionKey()` methods.
+
+Example is available here : https://github.com/EloGank/lol-replay-downloader/blob/master/examples/download-replay.php#L31-L45
 
 ## Important notes
 
