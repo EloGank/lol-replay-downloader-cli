@@ -108,9 +108,9 @@ php console elogank:replay:download EUW1 1234567890 nwP+BEYqHgk4sElnU2uRogoxGPUw
 
 A LoLNexus PHP parser exists here : https://github.com/EloGank/lol-replay-downloader/blob/master/examples/utils/LoLNexusParser.php
 
-Usage is simple : you juste have to select the region by calling the `LoLNexusParser::parse($regionId)` method and it will bring you all parameters for running a command by calling `LoLNexusParser::getRegion()`, `LoLNexusParser::getGameId()` or `LoLNexusParser::getEncryptionKey()` methods.
+Usage is simple : you juste have to select the region by calling `LoLNexusParser::parseRandom($regionId)` or `LoLNexusParser::parsePlayer($regionId, $playerName)` methods and it will bring you all parameters for running a command by calling `LoLNexusParser::getRegion()`, `LoLNexusParser::getGameId()` or `LoLNexusParser::getEncryptionKey()` methods.
 
-Example is available here : https://github.com/EloGank/lol-replay-downloader/blob/master/examples/download-replay.php#L31-L45
+Example is available here : https://github.com/EloGank/lol-replay-downloader/blob/master/examples/download-replay.php#L29-L45
 
 ## Important notes
 
