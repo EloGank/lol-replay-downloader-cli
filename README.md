@@ -1,7 +1,7 @@
 League of Legends Replay Downloader CLI
 ===================================
 
-This project provides you a simple command to easilly download a League of Legends replay game which still in process (ingame), like *lolking* or *op.gg* feature. Replays are stored in your server and can be watched at any time.  
+This project provides you a simple command to easily download a League of Legends replay game which still in process (ingame), like *lolking* or *op.gg* feature. Replays are stored in your server and can be watched at any time.  
 All download files can be decoded to parse them.
 It uses the library : https://github.com/EloGank/lol-replay-downloader
 
@@ -110,7 +110,7 @@ A LoLNexus PHP parser exists here : https://github.com/EloGank/lol-replay-downlo
 
 Usage is simple : you juste have to select the region by calling `LoLNexusParser::parseRandom($regionId)` or `LoLNexusParser::parsePlayer($regionId, $playerName)` methods and it will bring you all parameters for running a command by calling `LoLNexusParser::getRegion()`, `LoLNexusParser::getGameId()` or `LoLNexusParser::getEncryptionKey()` methods.
 
-Example is available here : https://github.com/EloGank/lol-replay-downloader/blob/master/examples/download-replay.php#L29-L45
+Example is available here : https://github.com/EloGank/lol-replay-downloader/blob/master/examples/download-replay.php#L32-L48
 
 ## Important notes
 
