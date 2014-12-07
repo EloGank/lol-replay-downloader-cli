@@ -16,7 +16,7 @@ use EloGank\Component\Command\Handler\FailureHandlerInterface;
 use EloGank\Component\Command\Handler\SuccessHandlerInterface;
 use EloGank\Component\Configuration\Config;
 use EloGank\Component\Configuration\Exception\ConfigurationKeyNotFoundException;
-use EloGank\Replay\Client\ReplayClient;
+use EloGank\Replay\Downloader\Client\ReplayClient;
 use EloGank\Replay\Command\Output\ConsoleOutput;
 use EloGank\Replay\Downloader\ReplayDownloader;
 use EloGank\Replay\ReplayInterface;
