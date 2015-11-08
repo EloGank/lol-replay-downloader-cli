@@ -12,6 +12,7 @@
 namespace EloGank\Component\Command\Handler;
 
 use EloGank\Replay\ReplayInterface;
+use Symfony\Component\Console\Output\OutputInterface;
 
 /**
  * @author Sylvain Lorinet <sylvain.lorinet@gmail.com>
@@ -21,8 +22,9 @@ interface SuccessHandlerInterface
     /**
      * Executed on success. Throws exception to stop the process, then failure handler will be thrown.
      *
+     * @param OutputInterface $output
      * @param ReplayInterface $replay
      * @param string          $replayFolderPath
      */
-    public function onSuccess(ReplayInterface $replay, $replayFolderPath);
-} 
+    public function onSuccess(OutputInterface $output, ReplayInterface $replay, $replayFolderPath);
+}

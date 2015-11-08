@@ -2,7 +2,7 @@
    "name": "elogank/lol-replay-downloader-cli",
    "description": "League of Legend replay CLI downloader without any software. Replays are saved into the cloud.",
    "keywords": ["lol", "command", "league of legends", "replay", "downloader", "record", "recorder", "cli", "console"],
-   "licence": "MIT",
+   "license": "MIT",
    "authors": [
        {
            "name": "Sylvain Lorinet",
@@ -14,6 +14,7 @@
         "incenteev/composer-parameter-handler": "~2.1.0",
         "symfony/yaml": "~2.5.7",
         "symfony/console": "~2.5.5",
+        "elogank/lol-replay": "1.0.*@dev",
         "elogank/lol-replay-downloader": "1.1.*@dev"
     },
     "scripts": {

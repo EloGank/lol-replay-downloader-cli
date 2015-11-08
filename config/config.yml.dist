@@ -28,6 +28,9 @@ config:
                 success: ~
                 # On command failure, must be a class namespace
                 failure: ~
+            exception:
+                # Don't throw a full exception by default, only show the message
+                throw: false
         http_client:
             # List of the spectator server addresses
             servers:
@@ -36,7 +39,7 @@ config:
                 EUN1:    95.172.65.26:8088
                 KR:      110.45.191.11:8088
                 BR1:     66.151.33.19:80
-                TR1:     95.172.65.242:80 
+                TR1:     95.172.65.242:80
                 TW:      112.121.84.194:8088
                 LA1:     66.151.33.19:80
                 LA2:     66.151.33.19:80

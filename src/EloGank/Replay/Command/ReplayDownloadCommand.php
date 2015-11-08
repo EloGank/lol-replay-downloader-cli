@@ -100,17 +100,21 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
             );
 
             // Execute handler
-            $this->onSuccess($replay, $replayDownloader->getReplayDirPath($region, $gameId));
+            $this->onSuccess($output, $replay, $replayDownloader->getReplayDirPath($region, $gameId));
 
+            $this->success($output, 'Finished without error');
         }
         catch (\Exception $e) {
             // Execute handler
-            $this->onFailure($region, $gameId, $encryptionKey, $replayDownloader->getReplayDirPath($region, $gameId), $e);
-
-            throw $e;
+            $this->onFailure(
+                $output,
+                $region,
+                $gameId,
+                $encryptionKey,
+                $replayDownloader->getReplayDirPath($region, $gameId),
+                $e
+            );
         }
-
-        $this->success($output, 'Finished without error');
     }
 
     /**
@@ -134,10 +138,11 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
     /**
      * Executed on success
      *
+     * @param OutputInterface $output
      * @param ReplayInterface $replay
      * @param string          $replayFolderPath
      */
-    public function onSuccess(ReplayInterface $replay, $replayFolderPath)
+    public function onSuccess(OutputInterface $output, ReplayInterface $replay, $replayFolderPath)
     {
         $successHandler = null;
         try {
@@ -150,25 +155,40 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
         if (null != $successHandler) {
             $successHandlerClass = new $successHandler();
             if (!$successHandlerClass instanceof SuccessHandlerInterface) {
-                throw new \InvalidArgumentException('The success handler class ' . $successHandler . ' should implement \EloGank\Component\Handler\SuccessHandlerInterface');
+                throw new \InvalidArgumentException(
+                    'The success handler class '
+                    . $successHandler . ' should implement \EloGank\Component\Handler\SuccessHandlerInterface'
+                );
             }
 
-            $successHandlerClass->onSuccess($replay, $replayFolderPath);
+            $successHandlerClass->onSuccess($output, $replay, $replayFolderPath);
         }
     }
 
     /**
      * Executed on failure
      *
-     * @param string     $region
-     * @param int        $gameId
-     * @param string     $encryptionKey
-     * @param string     $replayFolderPath
-     * @param \Exception $exception
+     * @param OutputInterface $output
+     * @param string          $region
+     * @param int             $gameId
+     * @param string          $encryptionKey
+     * @param string          $replayFolderPath
+     * @param \Exception      $exception
+     *
+     * @throws \Exception
+     *
+     * @return null|bool
      */
-    public function onFailure($region, $gameId, $encryptionKey, $replayFolderPath, \Exception $exception)
-    {
+    public function onFailure(
+        OutputInterface $output,
+        $region,
+        $gameId,
+        $encryptionKey,
+        $replayFolderPath,
+        \Exception $exception
+    ) {
         $failureHandler = null;
+
         try {
             $failureHandler = Config::get('replay.command.handler.failure');
         }
@@ -176,13 +196,34 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
             // Failure handler is not set
         }
 
+        $throwException = true;
+
         if (null != $failureHandler) {
             $failureHandlerClass = new $failureHandler();
+
             if (!$failureHandlerClass instanceof FailureHandlerInterface) {
-                throw new \InvalidArgumentException('The failure handler class ' . $failureHandler . ' should implement \EloGank\Component\Handler\FailureHandlerInterface');
+                throw new \InvalidArgumentException(
+                    'The failure handler class '
+                    . $failureHandler . ' should implement \EloGank\Component\Handler\FailureHandlerInterface'
+                );
             }
 
-            $failureHandlerClass->onFailure($region, $gameId, $encryptionKey, $replayFolderPath, $exception);
+            $throwException = $failureHandlerClass->onFailure(
+                $output,
+                $region,
+                $gameId,
+                $encryptionKey,
+                $replayFolderPath,
+                $exception
+            );
         }
+
+        if (Config::get('replay.command.exception.throw') && true === $throwException) {
+            throw $exception;
+        }
+
+        $output->writeln('');
+
+        $this->error($output, $exception->getMessage());
     }
 }
