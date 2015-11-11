@@ -85,6 +85,7 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
         $this->info($output, 'Downloading replay #' . $gameId . ' (' . $region . ')');
 
         $regions = Config::get('replay.http_client.servers');
+
         if (!isset($regions[$region])) {
             throw new \RuntimeException('Cannot determine game region : ' . $region);
         }
@@ -103,8 +104,7 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
             $this->onSuccess($output, $replay, $replayDownloader->getReplayDirPath($region, $gameId));
 
             $this->success($output, 'Finished without error');
-        }
-        catch (\Exception $e) {
+        } catch (\Exception $e) {
             // Execute handler
             $this->onFailure(
                 $output,
@@ -147,8 +147,7 @@ class ReplayDownloadCommand extends Command implements SuccessHandlerInterface, 
         $successHandler = null;
         try {
             $successHandler = Config::get('replay.command.handler.success');
-        }
-        catch (ConfigurationKeyNotFoundException $e) {
+        } catch (ConfigurationKeyNotFoundException $e) {
             // Success handler is not set
         }
 
